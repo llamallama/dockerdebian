@@ -49,5 +49,5 @@ EOF
 sed -i "s/dockerbase/$hostname/g" /etc/{hostname,hosts}
 
 # Remove autologin:w
-rm -rf '/etc/systemd/system/getty0.service.d'
+rm -rf '/etc/systemd/system/getty@.service.d'
 sed -i '$d' ~/.bashrc
