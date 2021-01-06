@@ -66,6 +66,9 @@ then
 	[Install]
 	WantedBy=multi-user.target
 	EOF
+
+  systemctl daemon-reload
+  systemctl enable mnt-localstore.mount
 fi
 
 # Remove autologin
