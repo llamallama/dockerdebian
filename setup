@@ -5,6 +5,7 @@ set -euf -o pipefail
 github_id='llamallama'
 docker_version='5:18.09.9~3-0~debian-buster'
 user='chris'
+extra_drive='/dev/sdb'
 
 # Run updates
 apt-get update && apt-get -y dist-upgrade
@@ -48,6 +49,25 @@ EOF
 # Set hostname
 sed -i "s/dockerbase/$hostname/g" /etc/{hostname,hosts}
 
-# Remove autologin:w
+# Mount extra drive if available
+if [[ -b "$extra_drive" ]]
+then
+  mkfs.ext4 "$extra_drive"
+  cat <<-EOF >> /etc/systemd/system/mnt-localstore.mount
+	[Unit]
+	Description=External k8s mount
+
+	[Mount]
+	What=$extra_drive
+	Where=/mnt/localstore
+	Type=ext4
+	Options=defaults
+
+	[Install]
+	WantedBy=multi-user.target 
+	EOF
+fi
+
+# Remove autologin
 rm -rf '/etc/systemd/system/getty@.service.d'
 sed -i '$d' ~/.bashrc
