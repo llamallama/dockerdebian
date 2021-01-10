@@ -2,9 +2,6 @@
 
 set -euf -o pipefail
 
-echo "Sleeping 5 seconds while network initializes"
-sleep 5
-
 source functions
 
 docker_version='5:18.09.9~3-0~debian-buster'
