@@ -14,6 +14,10 @@ install_ssh() {
   su "$user" -c "ssh-import-id-gh $github_id"
 }
 
+install_common_utils() {
+  apt-get -y install nfs-common
+}
+
 install_docker() {
   if [[ -z "${1-}" ]]
   then

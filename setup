@@ -8,6 +8,7 @@ docker_version='5:18.09.9~3-0~debian-buster'
 
 run_updates
 install_ssh
+install_common_utils
 install_docker "$docker_version"
 setup_network
 add_drive
