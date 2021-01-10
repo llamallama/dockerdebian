@@ -15,7 +15,7 @@ install_ssh() {
 }
 
 install_common_utils() {
-  apt-get -y install nfs-common
+  apt-get -y install nfs-common curl
 }
 
 install_docker() {
