@@ -60,7 +60,7 @@ setup_network() {
   update-alternatives --set iptables /usr/sbin/iptables-legacy
 
   # Set hostname
-  sed -i "s/dockerbase/$hostname/g" /etc/{hostname,hosts}
+  sed -i "s/debianbase/$hostname/g" /etc/{hostname,hosts}
   hostname "$hostname"
 }
 
