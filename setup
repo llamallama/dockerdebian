@@ -2,6 +2,9 @@
 
 set -euf -o pipefail
 
+echo "Sleeping 5 seconds while network initializes"
+sleep 5
+
 source functions
 
 docker_version='5:18.09.9~3-0~debian-buster'
@@ -9,11 +12,10 @@ docker_version='5:18.09.9~3-0~debian-buster'
 run_updates
 install_ssh
 install_common_utils
-install_docker "$docker_version"
 setup_network
 add_drive
 
 if [[ "$(hostname)" == *"rancher"* ]]
 then
-  setup_docker
+  install_docker "$docker_version"
 fi
