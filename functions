@@ -40,10 +40,10 @@ install_docker() {
 }
 
 setup_network() {
-  ip_address=$(hostname -I | cut -d' ' -f1)
-  ip_octal=$(echo "$ip_address" | awk -F '.' '{ print $4 }')
-  hostname=$(host "$ip_address" | awk '{ print $5 }' | awk -F '.' '{ print $1 }')
-  storage_ip="192.168.200.$ip_octal"
+  local ip_address=$(hostname -I | cut -d' ' -f1)
+  local ip_octal=$(echo "$ip_address" | awk -F '.' '{ print $4 }')
+  local hostname=$(host "$ip_address" | awk '{ print $5 }' | awk -F '.' '{ print $1 }')
+  local storage_ip="192.168.200.$ip_octal"
 
   cat <<- EOF >> /etc/network/interfaces
 	auto ens19
@@ -57,6 +57,7 @@ setup_network() {
 
   # Set hostname
   sed -i "s/dockerbase/$hostname/g" /etc/{hostname,hosts}
+  hostname "$hostname"
 }
 
 add_drive() {

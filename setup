@@ -11,3 +11,8 @@ install_ssh
 install_docker "$docker_version"
 setup_network
 add_drive
+
+if [[ "$(hostname)" == *"rancher"* ]]
+then
+  setup_docker
+fi
