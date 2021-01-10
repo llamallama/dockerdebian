@@ -2,78 +2,12 @@
 
 set -euf -o pipefail
 
-github_id='llamallama'
+source functions
+
 docker_version='5:18.09.9~3-0~debian-buster'
-user='chris'
-extra_drive='/dev/sdb'
 
-# Run updates
-apt-get update && apt-get -y dist-upgrade
-
-# Install SSH and import public key
-apt-get -y install ssh-import-id
-
-su "$user" -c "ssh-import-id-gh $github_id"
-
-# Install docker
-apt-get -y install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common
-
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/debian \
-   $(lsb_release -cs) \
-   stable"
-apt-get update
-apt-get -y install "docker-ce=$docker_version" "docker-ce-cli=$docker_version" containerd.io
-
-usermod -a -G docker "$user"
-
-# Set storage IP
-ip_address=$(hostname -I | cut -d' ' -f1)
-ip_octal=$(echo "$ip_address" | awk -F '.' '{ print $4 }')
-hostname=$(host "$ip_address" | awk '{ print $5 }' | awk -F '.' '{ print $1 }')
-storage_ip="192.168.200.$ip_octal"
-
-cat << EOF >> /etc/network/interfaces
-auto ens19
-iface ens19 inet static
-  address $storage_ip
-  netmask 255.255.255.0
-EOF
-
-# Change default firewall
-update-alternatives --set iptables /usr/sbin/iptables-legacy
-
-# Set hostname
-sed -i "s/dockerbase/$hostname/g" /etc/{hostname,hosts}
-
-# Mount extra drive if available
-if [[ -b "$extra_drive" ]]
-then
-  mkfs.ext4 "$extra_drive"
-  cat <<-EOF >> /etc/systemd/system/mnt-localstore.mount
-	[Unit]
-	Description=External k8s mount
-
-	[Mount]
-	What=$extra_drive
-	Where=/mnt/localstore
-	Type=ext4
-	Options=defaults
-
-	[Install]
-	WantedBy=multi-user.target
-	EOF
-
-  systemctl daemon-reload
-  systemctl enable mnt-localstore.mount
-fi
-
-# Remove autologin
-rm -rf '/etc/systemd/system/getty@.service.d'
-sed -i '$d' ~/.bashrc
+run_updates
+install_ssh
+install_docker "$docker_version"
+setup_network
+add_drive

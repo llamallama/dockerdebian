@@ -1,0 +1,12 @@
+[Unit]
+Description=External k8s mount
+
+[Mount]
+What=/dev/sdb
+Where=/mnt/localstore
+Type=ext4
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target 
+
